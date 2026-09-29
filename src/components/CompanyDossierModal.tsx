@@ -1,21 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CompanyRecord } from '../types';
 import { 
   X, 
-  ExternalLink, 
+  ArrowUpRight, 
   ShieldCheck, 
   ShieldAlert, 
-  Zap, 
-  Filter, 
-  Calendar, 
-  Layers, 
-  FileText,
-  UserCheck,
-  CheckCircle,
-  HelpCircle,
-  Cpu
+  Calendar 
 } from 'lucide-react';
 
 interface CompanyDossierModalProps {
@@ -31,148 +23,157 @@ export const CompanyDossierModal: React.FC<CompanyDossierModalProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'briefing' | 'signals' | 'reliability' | 'scoring'>('briefing');
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (company) window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [company, onClose]);
+
   if (!company) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
-      <div 
-        className="bg-white w-full max-w-3xl rounded-2xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in-50 zoom-in-95 duration-150"
-      >
+    <div 
+      className="fixed inset-0 z-50 bg-zinc-950/40 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="bg-white w-full max-w-2xl rounded-xl border border-zinc-200/80 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in-50 zoom-in-95 duration-150">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
-          <div className="flex items-center gap-3">
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-slate-900">{company.name}</h2>
-                <a
-                  href={`https://${company.domain}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-slate-400 hover:text-slate-600 inline-flex items-center gap-1 text-xs"
-                >
-                  <span>{company.domain}</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
-              <div className="text-xs text-slate-500 mt-0.5">
-                {company.industry} • {company.businessModel}
-              </div>
+        <div className="px-6 py-4 border-b border-zinc-100 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-semibold text-zinc-900 tracking-tight">
+                {company.name}
+              </h2>
+              <a
+                href={`https://${company.domain}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-zinc-400 hover:text-zinc-700 inline-flex items-center text-xs"
+              >
+                <span>{company.domain}</span>
+                <ArrowUpRight className="w-3 h-3 ml-0.5" />
+              </a>
+            </div>
+            <div className="text-xs text-zinc-500 mt-0.5">
+              {company.industry} • {company.businessModel}
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => onOpenOutreach(company)}
-              className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition"
+              className="bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition"
             >
-              Draft Outreach
+              Prepare Outreach
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition"
+              className="p-1.5 text-zinc-400 hover:text-zinc-700 rounded-lg hover:bg-zinc-100 transition"
+              aria-label="Close"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 px-6 bg-white gap-6 text-xs font-medium">
+        <div className="flex border-b border-zinc-100 px-6 bg-white gap-6 text-xs font-medium">
           <button
             onClick={() => setActiveTab('briefing')}
-            className={`py-3 border-b-2 transition ${
+            className={`py-2.5 border-b-2 transition ${
               activeTab === 'briefing'
-                ? 'border-slate-900 text-slate-900'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-zinc-900 text-zinc-900'
+                : 'border-transparent text-zinc-400 hover:text-zinc-700'
             }`}
           >
-            30s Briefing (Task 1)
+            Overview (Task 1)
           </button>
 
           <button
             onClick={() => setActiveTab('signals')}
-            className={`py-3 border-b-2 transition flex items-center gap-1.5 ${
+            className={`py-2.5 border-b-2 transition ${
               activeTab === 'signals'
-                ? 'border-slate-900 text-slate-900'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-zinc-900 text-zinc-900'
+                : 'border-transparent text-zinc-400 hover:text-zinc-700'
             }`}
           >
-            <Zap className="w-3.5 h-3.5 text-amber-500" />
-            <span>Signals & Deltas (Task 6)</span>
+            Signals & Deltas (Task 6)
           </button>
 
           <button
             onClick={() => setActiveTab('reliability')}
-            className={`py-3 border-b-2 transition flex items-center gap-1.5 ${
+            className={`py-2.5 border-b-2 transition ${
               activeTab === 'reliability'
-                ? 'border-slate-900 text-slate-900'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-zinc-900 text-zinc-900'
+                : 'border-transparent text-zinc-400 hover:text-zinc-700'
             }`}
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Data Reliability (Task 7)</span>
+            Data Reliability (Task 7)
           </button>
 
           <button
             onClick={() => setActiveTab('scoring')}
-            className={`py-3 border-b-2 transition ${
+            className={`py-2.5 border-b-2 transition ${
               activeTab === 'scoring'
-                ? 'border-slate-900 text-slate-900'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
+                ? 'border-zinc-900 text-zinc-900'
+                : 'border-transparent text-zinc-400 hover:text-zinc-700'
             }`}
           >
-            Scoring Formula (Task 2)
+            Score Rubric (Task 2)
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto space-y-6 text-xs text-slate-700">
-          {/* TAB 1: 30-Second Intelligence Briefing */}
+        <div className="p-6 overflow-y-auto space-y-5 text-xs text-zinc-700">
+          {/* TAB 1: Briefing */}
           {activeTab === 'briefing' && (
-            <div className="space-y-5">
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+            <div className="space-y-4">
+              <div className="bg-zinc-50/70 p-4 rounded-xl border border-zinc-200/60">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block mb-1">
                   Core Value Proposition
                 </span>
-                <p className="text-sm font-medium text-slate-900 leading-relaxed">
+                <p className="text-xs font-medium text-zinc-900 leading-relaxed">
                   {company.summary}
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="border border-slate-200 p-4 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                    Target ICP & Customer Profile
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="border border-zinc-200/70 p-3.5 rounded-xl">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block mb-1">
+                    Target ICP
                   </span>
-                  <p className="text-slate-700 leading-relaxed">
+                  <p className="text-zinc-700 leading-relaxed text-xs">
                     {company.targetMarket}
                   </p>
                 </div>
 
-                <div className="border border-slate-200 p-4 rounded-xl">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                    Monetization & Business Model
+                <div className="border border-zinc-200/70 p-3.5 rounded-xl">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block mb-1">
+                    Business Model
                   </span>
-                  <p className="text-slate-700 leading-relaxed">
+                  <p className="text-zinc-700 leading-relaxed text-xs">
                     {company.businessModel}
                   </p>
                 </div>
               </div>
 
-              {/* Detected Tech Stack with Confidence */}
+              {/* Observed Tech Stack */}
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block mb-2">
                   Observed Tech Stack (Evidence-based)
                 </span>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5">
                   {company.techStack.map((tech) => (
                     <div
                       key={tech.name}
-                      className="flex items-center gap-1.5 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200 text-xs"
+                      className="bg-zinc-100/80 px-2.5 py-1 rounded text-xs text-zinc-800 flex items-center gap-1.5"
                     >
-                      <Cpu className="w-3 h-3 text-slate-500" />
-                      <span className="font-medium text-slate-800">{tech.name}</span>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="font-medium">{tech.name}</span>
+                      <span className="text-[10px] text-zinc-400 font-mono">
                         ({tech.confidence})
                       </span>
                     </div>
@@ -180,93 +181,79 @@ export const CompanyDossierModal: React.FC<CompanyDossierModalProps> = ({
                 </div>
               </div>
 
-              {/* Recommended Persona Callout */}
-              <div className="bg-emerald-50/60 border border-emerald-200/80 p-4 rounded-xl">
-                <div className="flex items-center gap-2 text-emerald-950 font-semibold mb-1">
-                  <UserCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Buying Committee Recommendation</span>
-                </div>
-                <div className="text-slate-800">
-                  <span className="font-semibold text-slate-900">Target Role: </span>
+              {/* Persona Callout */}
+              <div className="border border-zinc-200/70 p-4 rounded-xl space-y-1">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">
+                  Buying Committee Recommendation
+                </span>
+                <div className="font-medium text-zinc-900 text-xs">
                   {company.persona.recommendedRole}
                 </div>
-                <p className="text-slate-600 mt-1 leading-relaxed">
+                <p className="text-zinc-600 leading-relaxed text-xs">
                   {company.persona.personaRationale}
                 </p>
                 {company.persona.identifiedPerson && (
-                  <div className="mt-2 pt-2 border-t border-emerald-200/60 text-[11px] text-emerald-900">
-                    <span className="font-semibold">Public Verification: </span>
-                    {company.persona.identifiedPerson.name} ({company.persona.identifiedPerson.title}) — Source: {company.persona.identifiedPerson.source}
+                  <div className="text-[11px] text-zinc-500 pt-1 border-t border-zinc-100 mt-2">
+                    Verified Public Contact: <strong>{company.persona.identifiedPerson.name}</strong> ({company.persona.identifiedPerson.title}) — Source: {company.persona.identifiedPerson.source}
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* TAB 2: Signals & Time-Series Deltas */}
+          {/* TAB 2: Signals & Deltas */}
           {activeTab === 'signals' && (
-            <div className="space-y-5">
-              <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 text-slate-600 leading-relaxed">
-                Task 6 Requirement: Compares information from two points in time (T1 vs T2), surfacing actionable buying signals and separating noise.
-              </div>
-
-              {/* Snapshots Comparison */}
+            <div className="space-y-4">
               {company.snapshots.length >= 2 && (
-                <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-3">
-                    Time-Series Snapshot Comparison
+                <div className="border border-zinc-200/70 rounded-xl p-4 bg-zinc-50/40">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block mb-2.5">
+                    Snapshot Delta (T1 vs T2)
                   </span>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white p-3 rounded-lg border border-slate-200">
-                      <div className="text-xs font-semibold text-slate-500 mb-1 flex items-center gap-1">
+                  <div className="grid grid-cols-2 gap-3 text-[11px] font-mono">
+                    <div className="bg-white p-3 rounded-lg border border-zinc-200/60">
+                      <div className="text-zinc-400 mb-1 flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        <span>Baseline Snapshot (T1)</span>
+                        <span>Baseline (T1)</span>
                       </div>
-                      <div className="text-slate-800 font-mono text-[11px] space-y-1">
-                        <div>Date: {company.snapshots[0].snapshotDate.slice(0, 10)}</div>
-                        <div>Headcount: {company.snapshots[0].employeeCount}</div>
-                        <div>Open Roles: {company.snapshots[0].openRolesCount}</div>
-                        <div>Tiers: {company.snapshots[0].pricingTiersDetected?.join(', ')}</div>
-                      </div>
+                      <div className="text-zinc-700">Date: {company.snapshots[0].snapshotDate.slice(0, 10)}</div>
+                      <div className="text-zinc-700">Headcount: {company.snapshots[0].employeeCount}</div>
+                      <div className="text-zinc-700">Open Roles: {company.snapshots[0].openRolesCount}</div>
                     </div>
 
-                    <div className="bg-white p-3 rounded-lg border border-slate-200 border-l-2 border-l-emerald-500">
-                      <div className="text-xs font-semibold text-emerald-700 mb-1 flex items-center gap-1">
+                    <div className="bg-white p-3 rounded-lg border border-zinc-200/60 border-l-2 border-l-zinc-900">
+                      <div className="text-zinc-900 font-semibold mb-1 flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        <span>Latest Snapshot (T2)</span>
+                        <span>Latest (T2)</span>
                       </div>
-                      <div className="text-slate-800 font-mono text-[11px] space-y-1">
-                        <div>Date: {company.snapshots[1].snapshotDate.slice(0, 10)}</div>
-                        <div>Headcount: {company.snapshots[1].employeeCount}</div>
-                        <div>Open Roles: {company.snapshots[1].openRolesCount}</div>
-                        <div>Tiers: {company.snapshots[1].pricingTiersDetected?.join(', ')}</div>
-                      </div>
+                      <div className="text-zinc-700">Date: {company.snapshots[1].snapshotDate.slice(0, 10)}</div>
+                      <div className="text-zinc-700">Headcount: {company.snapshots[1].employeeCount}</div>
+                      <div className="text-zinc-700">Open Roles: {company.snapshots[1].openRolesCount}</div>
                     </div>
                   </div>
                 </div>
               )}
 
               {/* Meaningful Signals */}
-              <div className="space-y-3">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                  Meaningful Commercial Signals (High Priority)
+              <div className="space-y-2.5">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">
+                  Actionable Buying Signals
                 </span>
                 {company.signals
                   .filter((s) => s.isMeaningfulSignal)
                   .map((signal) => (
                     <div
                       key={signal.id}
-                      className="border border-amber-200 bg-amber-50/60 p-3.5 rounded-xl space-y-1.5"
+                      className="border border-zinc-200/80 bg-white p-3.5 rounded-xl space-y-1"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="bg-amber-100 text-amber-900 font-semibold px-2 py-0.5 rounded text-[10px] font-mono">
+                        <span className="bg-zinc-100 text-zinc-800 font-mono text-[10px] px-1.5 py-0.5 rounded">
                           {signal.type}
                         </span>
-                        <h4 className="font-semibold text-slate-900 text-xs">
+                        <h4 className="font-medium text-zinc-900 text-xs">
                           {signal.headline}
                         </h4>
                       </div>
-                      <p className="text-slate-700 leading-relaxed">
+                      <p className="text-zinc-600 text-xs leading-relaxed">
                         {signal.actionableInsight}
                       </p>
                     </div>
@@ -274,60 +261,46 @@ export const CompanyDossierModal: React.FC<CompanyDossierModalProps> = ({
               </div>
 
               {/* Filtered Noise */}
-              <div className="space-y-2 pt-2 border-t border-slate-200">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                  Filtered Out as Low-Signal Noise
+              <div className="space-y-1.5 pt-2">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">
+                  Filtered Out as Low-Intent Noise
                 </span>
                 {company.signals
                   .filter((s) => !s.isMeaningfulSignal)
                   .map((signal) => (
                     <div
                       key={signal.id}
-                      className="border border-slate-200 bg-slate-50/80 p-3 rounded-lg flex items-center justify-between text-slate-500"
+                      className="border border-zinc-200/60 bg-zinc-50/60 p-2.5 rounded-lg flex items-center justify-between text-zinc-500 text-xs"
                     >
-                      <div>
-                        <span className="font-medium text-slate-700">{signal.headline}</span>
-                        <div className="text-[11px] text-slate-400">{signal.actionableInsight}</div>
-                      </div>
-                      <span className="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-mono">
-                        Noise Ignored
-                      </span>
+                      <span>{signal.headline}</span>
+                      <span className="text-[10px] text-zinc-400 font-mono">Ignored</span>
                     </div>
                   ))}
               </div>
             </div>
           )}
 
-          {/* TAB 3: Data Reliability & Conflict Resolution */}
+          {/* TAB 3: Data Reliability */}
           {activeTab === 'reliability' && (
-            <div className="space-y-5">
-              <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 text-slate-600 leading-relaxed">
-                Task 7 Requirement: When public sources provide conflicting information, decide which data to use, communicate uncertainty, and never hallucinate false precision.
-              </div>
-
-              {/* Confidence Metric Box */}
-              <div className="border border-slate-200 rounded-xl p-4 bg-white space-y-3">
+            <div className="space-y-4">
+              <div className="border border-zinc-200/70 rounded-xl p-4 bg-white space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-900">Headcount Estimate:</span>
-                  <span className="font-mono text-sm font-bold text-slate-900">
+                  <span className="text-zinc-600">Estimated Headcount:</span>
+                  <span className="font-mono text-xs font-bold text-zinc-900">
                     {company.reliability.employeeCountRange}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Calculated Confidence:</span>
-                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                    company.reliability.confidenceLevel === 'High'
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : 'bg-amber-100 text-amber-800'
-                  }`}>
-                    {company.reliability.confidenceLevel} Confidence
+                  <span className="text-zinc-600">Source Confidence:</span>
+                  <span className="font-mono text-xs font-medium text-zinc-900">
+                    {company.reliability.confidenceLevel}
                   </span>
                 </div>
 
                 {company.reliability.conflictExplanation && (
-                  <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg text-amber-900 text-xs">
-                    <span className="font-semibold">Conflict Resolution Note: </span>
+                  <div className="bg-zinc-50 border border-zinc-200/70 p-3 rounded-lg text-zinc-600 text-xs leading-relaxed">
+                    <strong className="text-zinc-900">Conflict Explanation: </strong>
                     {company.reliability.conflictExplanation}
                   </div>
                 )}
@@ -335,28 +308,25 @@ export const CompanyDossierModal: React.FC<CompanyDossierModalProps> = ({
 
               {/* Evidence Provenance Table */}
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                  Audited Evidence & Source Attribution
+                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block mb-2">
+                  Audited Source Citations
                 </span>
-                <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100">
+                <div className="border border-zinc-200/70 rounded-xl overflow-hidden divide-y divide-zinc-100">
                   {company.reliability.evidence.map((ev, i) => (
-                    <div key={i} className="p-3 bg-white space-y-1">
+                    <div key={i} className="p-3 bg-white space-y-0.5">
                       <div className="flex items-center justify-between">
-                        <span className="font-medium text-slate-900">{ev.sourceTitle}</span>
+                        <span className="font-medium text-zinc-900">{ev.sourceTitle}</span>
                         <a
                           href={ev.sourceUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-slate-400 hover:text-slate-600 flex items-center gap-1 text-[11px]"
+                          className="text-zinc-400 hover:text-zinc-700 flex items-center gap-0.5 text-[11px]"
                         >
-                          <span>Source URL</span>
-                          <ExternalLink className="w-3 h-3" />
+                          <span>URL</span>
+                          <ArrowUpRight className="w-3 h-3" />
                         </a>
                       </div>
-                      <p className="text-slate-600">{ev.claim}</p>
-                      <div className="text-[10px] text-slate-400 font-mono">
-                        Audited: {ev.retrievedAt}
-                      </div>
+                      <p className="text-zinc-600 text-xs">{ev.claim}</p>
                     </div>
                   ))}
                 </div>
@@ -364,63 +334,57 @@ export const CompanyDossierModal: React.FC<CompanyDossierModalProps> = ({
             </div>
           )}
 
-          {/* TAB 4: Deterministic Scoring Breakdown */}
+          {/* TAB 4: Scoring Formula */}
           {activeTab === 'scoring' && (
-            <div className="space-y-5">
-              <div className="bg-slate-50 p-3.5 rounded-lg border border-slate-200 text-slate-600 leading-relaxed">
-                Task 2 Requirement: Application-layer deterministic opportunity scoring based on explainable business dimensions (Fit, Timing, Reachability).
-              </div>
-
-              {/* Total Score Banner */}
-              <div className="bg-slate-900 text-white p-4 rounded-xl flex items-center justify-between">
+            <div className="space-y-4">
+              <div className="border border-zinc-900 bg-zinc-900 text-white p-4 rounded-xl flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">
-                    Calculated Opportunity Score
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">
+                    Calculated Intent Score
                   </span>
                   <span className="text-2xl font-bold font-mono">
                     {company.scoreResult.totalScore} / 100
                   </span>
                 </div>
-                <div className="text-right text-xs text-slate-300">
-                  <div>Daily Top 5 Eligible: {company.scoreResult.isTop5Eligible ? 'Yes' : 'No'}</div>
-                  <div className="text-slate-400 text-[11px] mt-0.5">{company.scoreResult.whyNowReasoning}</div>
+                <div className="text-right text-xs text-zinc-400">
+                  <div>Top 5 Eligible: {company.scoreResult.isTop5Eligible ? 'Yes' : 'No'}</div>
+                  <div className="text-[11px] mt-0.5 text-zinc-300">{company.scoreResult.whyNowReasoning}</div>
                 </div>
               </div>
 
-              {/* Score Breakdown Cards */}
-              <div className="space-y-3">
-                <div className="border border-slate-200 rounded-xl p-3.5 bg-white">
-                  <div className="flex justify-between font-semibold text-slate-900 mb-1">
-                    <span>1. Fit Score (ICP Alignment)</span>
+              <div className="space-y-2.5">
+                <div className="border border-zinc-200/70 rounded-xl p-3 bg-white">
+                  <div className="flex justify-between font-medium text-zinc-900 mb-1">
+                    <span>1. Fit Score</span>
                     <span className="font-mono">{company.scoreResult.fitScore} / 40</span>
                   </div>
-                  <ul className="text-slate-600 text-[11px] space-y-1 list-disc pl-4 mt-2">
-                    <li>B2B Monetization Model: {company.scoreResult.breakdown.b2bMonetization} / 15 pts</li>
-                    <li>Developer/Enterprise Traction: {company.scoreResult.breakdown.developerTraction} / 15 pts</li>
-                    <li>Tech Stack Compatibility: {company.scoreResult.breakdown.enterpriseTechFit} / 10 pts</li>
-                  </ul>
+                  <div className="text-zinc-500 text-[11px] font-mono space-y-0.5">
+                    <div>• B2B Monetization: {company.scoreResult.breakdown.b2bMonetization} / 15</div>
+                    <div>• Developer Traction: {company.scoreResult.breakdown.developerTraction} / 15</div>
+                    <div>• Tech Fit: {company.scoreResult.breakdown.enterpriseTechFit} / 10</div>
+                  </div>
                 </div>
 
-                <div className="border border-slate-200 rounded-xl p-3.5 bg-white">
-                  <div className="flex justify-between font-semibold text-slate-900 mb-1">
-                    <span>2. Timing Score (Intent Triggers)</span>
+                <div className="border border-zinc-200/70 rounded-xl p-3 bg-white">
+                  <div className="flex justify-between font-medium text-zinc-900 mb-1">
+                    <span>2. Timing Score</span>
                     <span className="font-mono">{company.scoreResult.timingScore} / 35</span>
                   </div>
-                  <ul className="text-slate-600 text-[11px] space-y-1 list-disc pl-4 mt-2">
-                    <li>Recent High-Intent Trigger Event: {company.scoreResult.breakdown.recentTrigger} / 20 pts</li>
-                    <li>Relevant Active Hiring Surge: {company.scoreResult.breakdown.relevantHiring} / 15 pts</li>
-                  </ul>
+                  <div className="text-zinc-500 text-[11px] font-mono space-y-0.5">
+                    <div>• Recent Trigger: {company.scoreResult.breakdown.recentTrigger} / 20</div>
+                    <div>• Active Hiring: {company.scoreResult.breakdown.relevantHiring} / 15</div>
+                  </div>
                 </div>
 
-                <div className="border border-slate-200 rounded-xl p-3.5 bg-white">
-                  <div className="flex justify-between font-semibold text-slate-900 mb-1">
-                    <span>3. Reachability Score (Access & Presence)</span>
+                <div className="border border-zinc-200/70 rounded-xl p-3 bg-white">
+                  <div className="flex justify-between font-medium text-zinc-900 mb-1">
+                    <span>3. Reachability Score</span>
                     <span className="font-mono">{company.scoreResult.reachabilityScore} / 25</span>
                   </div>
-                  <ul className="text-slate-600 text-[11px] space-y-1 list-disc pl-4 mt-2">
-                    <li>Leadership Visibly Identified: {company.scoreResult.breakdown.leadershipVisible} / 15 pts</li>
-                    <li>Public Company Attribution: {company.scoreResult.breakdown.publicAttribution} / 10 pts</li>
-                  </ul>
+                  <div className="text-zinc-500 text-[11px] font-mono space-y-0.5">
+                    <div>• Visible Leadership: {company.scoreResult.breakdown.leadershipVisible} / 15</div>
+                    <div>• Public Attribution: {company.scoreResult.breakdown.publicAttribution} / 10</div>
+                  </div>
                 </div>
               </div>
             </div>

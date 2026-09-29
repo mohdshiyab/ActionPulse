@@ -25,7 +25,6 @@ export default function Home() {
 
   const handleCompanyAdded = (newCompany: CompanyRecord) => {
     setCompanies((prev) => [newCompany, ...prev]);
-    // If the newly analyzed company qualifies for Top 5, user stays or switches to top5
     setActiveTab('top5');
   };
 
@@ -40,7 +39,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
+    <div className="min-h-screen flex flex-col bg-[#fbfbfb] text-zinc-900 font-sans selection:bg-zinc-200">
       {/* Navigation Header */}
       <Header
         activeTab={activeTab}
@@ -51,7 +50,7 @@ export default function Home() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8">
         {activeTab === 'top5' ? (
           <Top5Queue
             companies={top5Queue}
@@ -68,20 +67,20 @@ export default function Home() {
         )}
       </main>
 
-      {/* Footer System Attribution */}
-      <footer className="border-t border-slate-200/80 bg-white py-6 mt-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-          <div>
-            <strong>ActionPulse</strong> — AI-Native B2B Account Intelligence & Action Engine
+      {/* Clean Minimalist Footer */}
+      <footer className="border-t border-zinc-200/60 bg-white py-5 mt-auto">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-zinc-500">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-zinc-800">ActionPulse</span>
+            <span className="text-zinc-300">•</span>
+            <span>Autonomous B2B Intelligence & Action Engine</span>
           </div>
-          <div className="flex items-center gap-4 text-[11px]">
-            <span>Task 1: Company Intelligence</span>
+          <div className="flex items-center gap-3 text-[11px] text-zinc-400 font-mono">
+            <span>Deterministic Scoring</span>
             <span>•</span>
-            <span>Task 6: Delta Detection</span>
+            <span>Delta Detection</span>
             <span>•</span>
-            <span>Task 7: Reliability</span>
-            <span>•</span>
-            <span>Task 9: Top 5 Focus</span>
+            <span>Conflict Audit</span>
           </div>
         </div>
       </footer>
