@@ -2,6 +2,9 @@
 
 > **An autonomous revenue intelligence engine that continuously monitors target accounts, detects commercial buying signals over time, resolves conflicting public data, deterministically scores opportunity intent, and serves an executive "Today's 5 Actions" queue with contextual outreach.**
 
+🌐 **Live Demo**: [https://actionpulse-topaz.vercel.app](https://actionpulse-topaz.vercel.app)  
+📦 **GitHub Repository**: [https://github.com/mohdshiyab/ActionPulse](https://github.com/mohdshiyab/ActionPulse)
+
 Built for the **Product Engineer — AI & Automation** role.
 
 ---
