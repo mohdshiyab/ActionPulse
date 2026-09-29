@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CompanyRecord, ScoringCriteriaFacts } from '../../../types';
 import { computeOpportunityScore } from '../../../lib/scoring';
+import { insertCompanyIntoDatabase } from '../../../lib/db';
 
 export async function POST(req: NextRequest) {
   try {
@@ -133,6 +134,9 @@ export async function POST(req: NextRequest) {
       createdAt: new Date().toISOString(),
       status: 'active',
     };
+
+    // Task 5 Automation: Input -> Research -> AI -> Structured Output -> Database
+    await insertCompanyIntoDatabase(newCompany);
 
     return NextResponse.json({ success: true, company: newCompany });
   } catch (err: unknown) {
